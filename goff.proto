@@ -1,0 +1,69 @@
+syntax = "proto3";
+option go_package = "github.com/pocket5s/goff";
+import "google/rpc/status.proto";
+//import "google/protobuf/any.proto";
+package goff;
+
+service Goff{
+  rpc CreateEnvironment(CreateEnvironmentRequest) returns (CreateEnvironmentResponse);
+  rpc CreateFlag(CreateFlagRequest) returns (CreateFlagResponse);
+  rpc DeleteFlag(DeleteFlagRequest) returns (DeleteFlagResponse);
+  rpc UpdateFlag(UpdateFlagRequest) returns (UpdateFlagResponse);
+  //rpc Subscribe( stream SubscribeRequest ) returns (stream SubscribeResponse);
+}
+
+message CreateEnvironmentRequest {
+  string environment = 0;
+  string name        = 1;
+  string description = 2;
+}
+
+message CreateEnvironmentResponse {
+  string id = 0;
+}
+
+message CreateFlagRequest {
+  string environment_id = 0;
+  string name           = 1;
+  string description    = 2;
+}
+
+message CreateFlagResponse {
+  string name = 0;
+}
+
+message Flag {
+  string name           = 0;
+  string description    = 1;
+  bool   enabled        = 2;
+  enum FlagType {
+    BOOLEAN = 0;
+    STRING  = 1;
+    NUMBER  = 2;
+  }
+  FlagType flag_type    = 3;
+  string environment_id = 4;
+  repeated string tags  = 5; // used for assigning context, such as specific users or user groups
+}
+
+/*
+message SubscribeRequest {
+  string consumer_group       = 1; // The consumer/service connecting
+  enum RequestType {
+    ACK        = 0; // Default, acking a message was received
+    CONNECT    = 1; // Tells the service this is an initial connection
+    DISCONNECT = 2; // Gracefully tells the service this client is disconnecting
+  }
+  RequestType request_type    = 2;
+  string domain               = 3; // Required if ACK
+  int64 timestamp             = 4; // Required if ACK
+  repeated string event_names = 5; // List of events this client is interested in. Required if CONNECT
+}
+
+message SubscribeResponse {
+  oneof message {
+    google.rpc.Status error = 1; // If the service connected to is _not_ the leader, a status code of FAILED_PRECONDITION with the message being the leader's IP
+    Event event             = 2; // An event the client is subscribed to
+  }
+}
+*/
